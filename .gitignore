@@ -1,1 +1,2 @@
-src/multiarm_bandit_module.mod
+multiarm_bandit_module.mod
+build/*
