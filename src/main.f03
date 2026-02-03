@@ -3,6 +3,6 @@ program main
 
     type(multiarm_bandit) :: foo
     call init(foo)
-    print *, foo%weight
+    print *, pull(foo)
 
 end program main

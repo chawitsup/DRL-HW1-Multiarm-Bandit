@@ -1,2 +1,3 @@
 multiarm_bandit_module.mod
-build/*
+/build
+

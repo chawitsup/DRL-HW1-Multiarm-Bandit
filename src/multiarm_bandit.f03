@@ -6,28 +6,27 @@ module multiarm_bandit_module
     type :: multiarm_bandit
 
         ! Initialized reward and weight of each reward as 1D array
-        integer :: reward_size
         integer, allocatable :: weight (:)
         integer, allocatable :: reward (:)
 
+        ! multiarm_bandit's method implementation
         contains
             procedure :: init
             ! procedure :: set_reward
-            ! procedure :: pull
+            procedure :: pull
 
 
     end type multiarm_bandit
     contains
         subroutine init(this)
-            
             IMPLICIT NONE
 
-            ! Create the result of the multiarm_bandit object
+            ! Create the result of the multiarm_bandit object initialization
             class (multiarm_bandit), intent(inout) :: this
             real :: rand_num 
 
-            ! Normal init give multiarm_bandit 2 random reward value
-            ! Check if allocated, if so, deallocated first
+            ! Normal init give multiarm_bandit 2 random reward value (0,1) and random weight
+            ! Check if memory allocated, if so, deallocated first
             if (allocated(this%weight)) then
                 deallocate(this%weight)
             end if
@@ -40,24 +39,48 @@ module multiarm_bandit_module
             allocate(this%reward(2))
             allocate(this%weight(2))
 
-            ! Random value of reward
+
+            ! Set Reward to 0 and 1 respectively
+            this%reward(1) = 0
+            this%reward(2) = 1
+
+            ! Seed random number from OS for generating pseudo-random number
             CALL RANDOM_SEED() 
 
-            CALL RANDOM_NUMBER(rand_num)
-            this%reward(1) = floor(rand_num * 11)
-
-            CALL RANDOM_NUMBER(rand_num)
-            this%reward(2) = floor(rand_num * 11)
-
+            ! Random weight between 1-10, and another as 10 - a
             CALL RANDOM_NUMBER(rand_num)
             this%weight(1) = floor(rand_num * 10) + 1
-
-            CALL RANDOM_NUMBER(rand_num)
-            this%weight(2) = floor(rand_num * 10) + 1
-
+            this%weight(2) = 10 - this%weight(1)
 
         end subroutine init
 
+        function pull(this) result(res)
+            IMPLICIT NONE
 
+            ! Initialized input of multiarm bandit class
+            class (multiarm_bandit), intent(inout) :: this
 
+            ! Declare other variable used in function
+            integer :: res, i
+            real :: rand_num
+
+            ! Seed random number from OS for generating pseudo-random number
+            CALL RANDOM_SEED()
+
+            ! Random the reward with cap at total weight
+            CALL RANDOM_NUMBER(rand_num)
+            res = FLOOR(rand_num * (SUM(this%weight) + 1.0))
+
+            ! Find which reward is return
+            do i = 1, SIZE(this%weight)
+                res = res - this%weight(i)
+                if (res <= 0) then
+                    res = this%reward(i)
+                    exit
+                end if
+            end do
+            
+        end function pull
+
+        
 end module multiarm_bandit_module
