@@ -1,3 +1,4 @@
 multiarm_bandit_module.mod
-/build
+greedy_y_agent_module.mod
+/build/*
 

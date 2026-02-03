@@ -11,14 +11,14 @@ module multiarm_bandit_module
 
         ! multiarm_bandit's method implementation
         contains
-            procedure :: init
-            ! procedure :: set_reward
+            procedure :: init_bandit
+            procedure :: set_reward
             procedure :: pull
 
 
     end type multiarm_bandit
     contains
-        subroutine init(this)
+        subroutine init_bandit(this)
             IMPLICIT NONE
 
             ! Create the result of the multiarm_bandit object initialization
@@ -52,7 +52,31 @@ module multiarm_bandit_module
             this%weight(1) = floor(rand_num * 10) + 1
             this%weight(2) = 10 - this%weight(1)
 
-        end subroutine init
+        end subroutine init_bandit
+
+        subroutine set_reward(this, reward_in, weight_in)
+            IMPLICIT NONE
+
+            ! Create result class of this function
+            class (multiarm_bandit), intent(inout) :: this
+
+            ! Create 2 variable for function input
+            integer, intent(in) :: reward_in (:)
+            integer, intent(in) :: weight_in (:)
+
+            ! Deallocate old value
+            if (allocated(this%weight)) deallocate(this%weight)
+            if (allocated(this%reward)) deallocate(this%reward)
+
+            ! Allocate new array
+            allocate(this%weight(SIZE(weight_in)))
+            allocate(this%reward(SIZE(reward_in)))
+
+            ! Put input to multiarm bandit's attribute
+
+            this%weight = weight_in
+            this%reward = reward_in
+        end subroutine set_reward
 
         function pull(this) result(res)
             IMPLICIT NONE
@@ -82,5 +106,7 @@ module multiarm_bandit_module
             
         end function pull
 
-        
+
+
+
 end module multiarm_bandit_module
