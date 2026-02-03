@@ -16,9 +16,9 @@ program main
     end do
 
     ! Initialized agent
-    CALL init_y_agent(GY_agent, SIZE(bandit), 0.7)
+    CALL init_y_agent(GY_agent, bandit, 0.7)
 
-    print *, GY_agent%epsilon_value
+    print *, GY_agent%bandit_instance(1)%weight
 
     ! reward = {
     ! call init_bandit(foo)
