@@ -9,6 +9,11 @@ module multiarm_bandit_module
         integer, allocatable :: weight (:)
         integer, allocatable :: reward (:)
 
+        ! Cumulative reward, pull count and expected value
+        integer :: total_reward
+        integer :: pull_count
+        real :: expected_reward
+
         ! multiarm_bandit's method implementation
         contains
             procedure :: init_bandit
@@ -52,6 +57,10 @@ module multiarm_bandit_module
             this%weight(1) = floor(rand_num * 10) + 1
             this%weight(2) = 10 - this%weight(1)
 
+            this%total_reward = 0
+            this%pull_count = 0
+            this%expected_reward = -1.0
+
         end subroutine init_bandit
 
         subroutine set_reward(this, reward_in, weight_in)
@@ -76,6 +85,11 @@ module multiarm_bandit_module
 
             this%weight = weight_in
             this%reward = reward_in
+            
+            this%total_reward = 0
+            this%pull_count = 0
+            this%expected_reward = -1.0
+
         end subroutine set_reward
 
         function pull(this) result(res)

@@ -10,13 +10,10 @@ module greedy_y_agent_module
         type (multiarm_bandit), allocatable :: bandit_instance (:)
         real :: epsilon_value
 
-        ! Array to store expected value for each multi arm bandit instance
-        integer, allocatable :: total_reward (:)
-        integer, allocatable :: pull_count (:)
-
         contains
             procedure :: init_y_agent
             procedure :: reset_y_agent
+            procedure :: iter_y_agent
 
     end type greedy_y_agent
 
@@ -49,20 +46,6 @@ module greedy_y_agent_module
             this%bandit_instance = bandit_in
             this%epsilon_value = epsilon_in
 
-            ! Deallocate old array
-            if (allocated(this%total_reward)) deallocate(this%total_reward)
-            if (allocated(this%pull_count)) deallocate(this%pull_count)
-
-            ! Allocate total reward and pull count to be coresponding to amount of multi arm bandit
-            allocate(this%total_reward(SIZE(this%bandit_instance)))
-            allocate(this%pull_count(SIZE(this%bandit_instance)))
-
-            ! Initialized all value to 0
-            do i = 1, SIZE(this%bandit_instance)
-                this%total_reward(i) = 0
-                this%pull_count(i) = 0
-            end do
-
         end subroutine init_y_agent
 
 
@@ -76,18 +59,69 @@ module greedy_y_agent_module
 
             ! Set all value to 0
             do i = 1, SIZE(this%bandit_instance)
-                this%total_reward(i) = 0
-                this%pull_count(i) = 0
+                this%bandit_instance(i)%total_reward = 0
+                this%bandit_instance(i)%pull_count = 0
+                this%bandit_instance(i)%expected_reward = 0
             end do
 
         end subroutine reset_y_agent
 
-    ! function iter_y_agent(this) result(n)
-    !     IMPLICIT NONE
+        function iter_y_agent(this) result(n)
+            IMPLICIT NONE
+
+            ! Declare agent object as input, n as agent's output
+            class (greedy_y_agent), intent(inout) :: this
+            integer :: n
+
+            ! Internal variable
+            integer :: i
+            real :: rand_num
+            integer :: choosen_instance
+
+            ! Random for epsilon value
+            call RANDOM_SEED()
+            call RANDOM_NUMBER(rand_num)
+
+            ! Choose between explore and exploit
+            if (rand_num < this%epsilon_value) then
+
+                ! Explore: Random which arm to explore
+                call RANDOM_NUMBER(rand_num)
+                choosen_instance = (rand_num * SIZE(this%bandit_instance)) + 1
+            
+            ! Choose which to exploit
+            else
+                ! Find expected value of each 
+                choosen_instance = 1
+
+                ! Linear search for max expected value
+                do i = 2, SIZE(this%bandit_instance)
+                    if (this%bandit_instance(i)%expected_reward > this%bandit_instance(choosen_instance)%expected_reward) then
+                        choosen_instance = i
+
+                        ! When two instance has tie expected_reward, use the chosen_instance
+
+                    ! else if (this%bandit_instance(i)%expected_reward == this%bandit_instance(choosen_instance)%expected_reward)
+                        ! TODO: Implement other tie breaker algorithm later
+
+                    end if
+
+                end do
+
+            end if
+
+            ! Pull the chosen arm
+            n = pull(this%bandit_instance(choosen_instance))
+
+            ! Update expected value
+            this%bandit_instance(choosen_instance)%total_reward = this%bandit_instance(choosen_instance)%total_reward + n
+            this%bandit_instance(choosen_instance)%pull_count = this%bandit_instance(choosen_instance)%pull_count + 1
+            this%bandit_instance(choosen_instance)%expected_reward = this%bandit_instance(choosen_instance)%total_reward / this%bandit_instance(choosen_instance)%pull_count
+
+        end function iter_y_agent
 
 
-
-    ! end function iter_y_agent
+    ! Add logging function
 
 
 
