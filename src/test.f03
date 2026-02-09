@@ -22,13 +22,6 @@ program main
 
     print *, iter_y_agent(GY_agent)
 
-    CALL init_log(l1, "./test.log")
-
-    CALL write_log(l1, "This is a test")
-    CALL write_log(l1, "Now, this is test2")
-
-    CALL end_log(l1)
-
 
 
 

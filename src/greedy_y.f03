@@ -12,6 +12,7 @@ module greedy_y_agent_module
 
         ! Logger parameter
         integer :: log_fd
+        logical :: do_log
         
 
         contains
@@ -42,15 +43,24 @@ module greedy_y_agent_module
             
 
             ! Open file
-            ! open(unit=this%log_fd, status=new, action="READWRITE", iostat=return_stat)
-            ! if (return_stat /= 0) then
-            !     print *, "Failed to open log file."
-            !     stop
-            ! end if
+            open(unit=this%log_fd, file=trim(adjustl('./greedy_y.log')), status='NEW', action="WRITE", iostat=return_stat)
+            if (return_stat /= 0) then
+                print *, "Failed to open log file."
+                stop
+            end if
 
             ! Check if epsilon is between 0 and 1
             if (epsilon_in < 0 .or. epsilon_in > 1) then
                 error stop "Epsilon in must be between 0 and 1."
+            end if
+
+            ! Write header to log file
+            write(unit=this%log_fd, fmt='(A,F0.10,A,I0)', iostat=return_stat)  "greedy_epsion, epsilon= ", epsilon_in, ", bandit_count= ", SIZE(bandit_in)
+            write(unit=this%log_fd, fmt='(A)', iostat=return_stat)  ""
+            write(unit=this%log_fd, fmt='(A)', iostat=return_stat)  "explore?, which_bandit, result"
+            if (return_stat /= 0) then
+                print *, "Failed to write to log file."
+                stop
             end if
 
             ! Check and allocate memory for bandit instance
@@ -72,6 +82,7 @@ module greedy_y_agent_module
             class (greedy_y_agent), intent(inout) :: this
 
             integer :: i
+            integer :: return_stat
 
             ! Set all value to 0
             do i = 1, SIZE(this%bandit_instance)
@@ -79,6 +90,12 @@ module greedy_y_agent_module
                 this%bandit_instance(i)%pull_count = 0
                 this%bandit_instance(i)%expected_reward = 0
             end do
+
+            write(unit=this%log_fd, fmt='(A)', iostat=return_stat)  "Bandit parameter reset"
+            if (return_stat /= 0) then
+                print *, "Failed to write to log file."
+                stop
+            end if
 
         end subroutine reset_y_agent
 
@@ -93,13 +110,17 @@ module greedy_y_agent_module
             integer :: i
             real :: rand_num
             integer :: choosen_instance
+            logical :: do_explore = .false.
+
+            integer :: return_stat
 
             ! Random for epsilon value
             call RANDOM_SEED()
             call RANDOM_NUMBER(rand_num)
 
             ! Choose between explore and exploit
-            if (rand_num < this%epsilon_value) then
+            if (rand_num < this%epsilon_value) do_explore = .true.
+            if (do_explore) then
 
                 ! Explore: Random which arm to explore
                 call RANDOM_NUMBER(rand_num)
@@ -135,15 +156,14 @@ module greedy_y_agent_module
             this%bandit_instance(choosen_instance)%expected_reward = this%bandit_instance(choosen_instance)%total_reward / this%bandit_instance(choosen_instance)%pull_count
 
             ! Log value
-
+            write(unit=this%log_fd, fmt='(L,A,I0,A,I0)', iostat=return_stat)  do_explore, ", ", choosen_instance,", ", n
+            if (return_stat /= 0) then
+                print *, "Failed to write to log file."
+                stop
+            end if
 
         end function iter_y_agent
 
-
-        ! Add logging function
-        ! subroutine start_log_y_agent(this)
-            
-        ! end subroutine
         
 
 
