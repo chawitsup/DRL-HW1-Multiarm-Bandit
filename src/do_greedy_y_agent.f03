@@ -9,6 +9,8 @@ program main
     integer, dimension(2) :: reward = [0,1]
     integer, dimension(2,10) :: weight = reshape([91, 9, 61, 39, 1, 99, 68, 32, 84, 16, 65, 35, 11, 89, 99, 1, 23, 77, 98, 2], [2,10])
     integer :: i
+    integer :: out
+
 
     ! Generate 10 multi-arm bandit instance, then assign with predefined reward and reward's weight
     do i = 1,10
@@ -18,8 +20,11 @@ program main
     ! Initialized agent
     CALL init_y_agent(GY_agent, bandit, 0.7)
 
-    print *, iter_y_agent(GY_agent)
+    ! Do 1000 iteration
+    do i = 1, 1000
+        out = iter_y_agent(GY_agent)
 
+    end do
 
 
 

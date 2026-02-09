@@ -1,4 +1,5 @@
 *.mod
 
-/build/*
+build/
+build/a.out
 

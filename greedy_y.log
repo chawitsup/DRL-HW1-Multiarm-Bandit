@@ -1,4 +1,0 @@
-greedy_epsion, epsilon= .6999999881, bandit_count= 10
-
-explore?, which_bandit, result
-T, 4, 1

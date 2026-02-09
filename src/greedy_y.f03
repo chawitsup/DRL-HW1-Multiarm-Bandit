@@ -164,16 +164,6 @@ module greedy_y_agent_module
 
         end function iter_y_agent
 
-        
-
-
-
-
-
-
-
-    
-
 
 
 end module greedy_y_agent_module
