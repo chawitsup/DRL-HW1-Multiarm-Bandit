@@ -10,6 +10,10 @@ module greedy_y_agent_module
         type (multiarm_bandit), allocatable :: bandit_instance (:)
         real :: epsilon_value
 
+        ! Logger parameter
+        integer :: log_fd
+        
+
         contains
             procedure :: init_y_agent
             procedure :: reset_y_agent
@@ -29,8 +33,20 @@ module greedy_y_agent_module
             type (multiarm_bandit), intent(in) :: bandit_in (:)
             real, intent(in) :: epsilon_in
 
+            ! Logger status
+            integer :: return_stat
+
             ! Internal variable
             integer :: i
+
+            
+
+            ! Open file
+            ! open(unit=this%log_fd, status=new, action="READWRITE", iostat=return_stat)
+            ! if (return_stat /= 0) then
+            !     print *, "Failed to open log file."
+            !     stop
+            ! end if
 
             ! Check if epsilon is between 0 and 1
             if (epsilon_in < 0 .or. epsilon_in > 1) then
@@ -118,10 +134,17 @@ module greedy_y_agent_module
             this%bandit_instance(choosen_instance)%pull_count = this%bandit_instance(choosen_instance)%pull_count + 1
             this%bandit_instance(choosen_instance)%expected_reward = this%bandit_instance(choosen_instance)%total_reward / this%bandit_instance(choosen_instance)%pull_count
 
+            ! Log value
+
+
         end function iter_y_agent
 
 
-    ! Add logging function
+        ! Add logging function
+        ! subroutine start_log_y_agent(this)
+            
+        ! end subroutine
+        
 
 
 

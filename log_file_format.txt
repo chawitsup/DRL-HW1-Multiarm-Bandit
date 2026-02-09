@@ -1,0 +1,7 @@
+greedy_epsion, epsilon=0.7, bandit_count=10
+exploit?, which_bandit, result
+
+
+
+ubc, bandit_count=10
+exploit?, which_bandit, result
