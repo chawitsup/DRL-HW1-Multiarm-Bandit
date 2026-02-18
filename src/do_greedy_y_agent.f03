@@ -18,10 +18,10 @@ program main
     end do
 
     ! Initialized agent
-    CALL init_y_agent(GY_agent, bandit, 0.7)
+    CALL init_y_agent(GY_agent, bandit, 0.1)
 
     ! Do 1000 iteration
-    do i = 1, 1000
+    do i = 1, 9999
         out = iter_y_agent(GY_agent)
 
     end do

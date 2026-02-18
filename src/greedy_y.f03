@@ -12,7 +12,6 @@ module greedy_y_agent_module
 
         ! Logger parameter
         integer :: log_fd
-        logical :: do_log
         
 
         contains
@@ -110,7 +109,7 @@ module greedy_y_agent_module
             integer :: i
             real :: rand_num
             integer :: choosen_instance
-            logical :: do_explore = .false.
+            logical :: do_explore
 
             integer :: return_stat
 
@@ -119,12 +118,16 @@ module greedy_y_agent_module
             call RANDOM_NUMBER(rand_num)
 
             ! Choose between explore and exploit
-            if (rand_num < this%epsilon_value) do_explore = .true.
+
+            do_explore = (rand_num < this%epsilon_value)
+
+
             if (do_explore) then
 
                 ! Explore: Random which arm to explore
                 call RANDOM_NUMBER(rand_num)
                 choosen_instance = (rand_num * SIZE(this%bandit_instance)) + 1
+            
             
             ! Choose which to exploit
             else
