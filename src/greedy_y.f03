@@ -156,10 +156,20 @@ module greedy_y_agent_module
             ! Update expected value
             this%bandit_instance(choosen_instance)%total_reward = this%bandit_instance(choosen_instance)%total_reward + n
             this%bandit_instance(choosen_instance)%pull_count = this%bandit_instance(choosen_instance)%pull_count + 1
-            this%bandit_instance(choosen_instance)%expected_reward = this%bandit_instance(choosen_instance)%total_reward / this%bandit_instance(choosen_instance)%pull_count
+            this%bandit_instance(choosen_instance)%expected_reward = real(this%bandit_instance(choosen_instance)%total_reward) / real(this%bandit_instance(choosen_instance)%pull_count)
 
             ! Log value
-            write(unit=this%log_fd, fmt='(L,A,I0,A,I0)', iostat=return_stat)  do_explore, ", ", choosen_instance,", ", n
+            write(unit=this%log_fd, fmt='(L,A,I0,A,I0)', iostat=return_stat, ADVANCE='NO')  do_explore, ", ", choosen_instance,", ", n
+
+            ! Dump all expected value
+            do i = 1, SIZE(this%bandit_instance)
+            write(unit=this%log_fd, fmt='(F10.2,A)', iostat=return_stat, ADVANCE='NO') this%bandit_instance(i)%expected_reward, ", "
+
+            end do 
+
+            ! New line
+            write(unit=this%log_fd, fmt='(A)', iostat=return_stat, ADVANCE='YES') ""
+            
             if (return_stat /= 0) then
                 print *, "Failed to write to log file."
                 stop

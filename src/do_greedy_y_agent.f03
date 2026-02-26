@@ -18,7 +18,7 @@ program main
     end do
 
     ! Initialized agent
-    CALL init_y_agent(GY_agent, bandit, 0.1)
+    CALL init_y_agent(GY_agent, bandit, 0.3)
 
     ! Do 1000 iteration
     do i = 1, 9999

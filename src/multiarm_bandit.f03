@@ -88,7 +88,7 @@ module multiarm_bandit_module
             
             this%total_reward = 0
             this%pull_count = 0
-            this%expected_reward = -1.0
+            this%expected_reward = 999999
 
         end subroutine set_reward
 
