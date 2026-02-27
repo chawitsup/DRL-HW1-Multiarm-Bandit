@@ -1,0 +1,15 @@
+Reward collected:  5734
+Agent's expected value:  Explore?           T
+Arm                1
+Reward             0
+Arm#1       0.090379
+Arm#2       0.396423
+Arm#3       0.980935
+Arm#4       0.317784
+Arm#5        0.14408
+Arm#6       0.348189
+Arm#7       0.891185
+Arm#8        0.02244
+Arm#9       0.749632
+Arm#10      0.017266
+Name: 9998, dtype: object

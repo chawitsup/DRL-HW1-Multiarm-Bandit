@@ -60,7 +60,7 @@ module multiarm_bandit_module
             ! Initialized expected reward with extremely high value to force a take when exploit
             this%total_reward = 0
             this%pull_count = 0
-            this%expected_reward = 1e38
+            this%expected_reward = 0
 
         end subroutine init_bandit
 

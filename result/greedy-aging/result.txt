@@ -1,0 +1,15 @@
+Reward collected:  9624
+Agent's expected value:  Explore?           F
+Arm                3
+Reward             1
+Arm#1       0.081395
+Arm#2       0.166667
+Arm#3       0.980384
+Arm#4         0.1875
+Arm#5       0.178571
+Arm#6           0.48
+Arm#7       0.903226
+Arm#8            0.0
+Arm#9            0.8
+Arm#10           0.0
+Name: 9999, dtype: object

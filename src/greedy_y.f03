@@ -163,7 +163,7 @@ module greedy_y_agent_module
 
             ! Dump all expected value
             do i = 1, SIZE(this%bandit_instance)
-            write(unit=this%log_fd, fmt='(F10.2,A)', iostat=return_stat, ADVANCE='NO') this%bandit_instance(i)%expected_reward, ", "
+            write(unit=this%log_fd, fmt='(A,F10.8)', iostat=return_stat, ADVANCE='NO') ", ", this%bandit_instance(i)%expected_reward
 
             end do 
 

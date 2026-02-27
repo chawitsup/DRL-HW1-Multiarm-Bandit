@@ -18,10 +18,17 @@ program main
     end do
 
     ! Initialized agent
-    CALL init_y_agent(GY_agent, bandit, 0.3)
+    CALL init_y_agent(GY_agent, bandit, 0.1)
 
-    ! Do 1000 iteration
-    do i = 1, 9999
+    ! Do 10000 iteration
+    do i = 1, 500
+        out = iter_y_agent(GY_agent)
+
+    end do
+
+    GY_agent%epsilon_value = 0.005
+
+    do i = 1, 9500
         out = iter_y_agent(GY_agent)
 
     end do
