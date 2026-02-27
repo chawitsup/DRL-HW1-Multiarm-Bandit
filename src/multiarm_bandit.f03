@@ -57,9 +57,10 @@ module multiarm_bandit_module
             this%weight(1) = floor(rand_num * 10) + 1
             this%weight(2) = 10 - this%weight(1)
 
+            ! Initialized expected reward with extremely high value to force a take when exploit
             this%total_reward = 0
             this%pull_count = 0
-            this%expected_reward = -1.0
+            this%expected_reward = 1e38
 
         end subroutine init_bandit
 
@@ -85,10 +86,6 @@ module multiarm_bandit_module
 
             this%weight = weight_in
             this%reward = reward_in
-            
-            this%total_reward = 0
-            this%pull_count = 0
-            this%expected_reward = 999999
 
         end subroutine set_reward
 
