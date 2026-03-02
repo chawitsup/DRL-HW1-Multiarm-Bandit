@@ -69,10 +69,62 @@ module ucb_agent_module
 
             IMPLICIT NONE
 
+            ! Declare variable
+            class (ucb_agent), intent(inout) :: this
 
+                        integer :: i
+            integer :: return_stat
 
+            ! Set all value to 0
+            do i = 1, SIZE(this%bandit_instance)
+                this%bandit_instance(i)%total_reward = 0
+                this%bandit_instance(i)%pull_count = 0
+                this%bandit_instance(i)%expected_reward = 0
+            end do
+
+            write(unit=this%log_fd, fmt='(A)', iostat=return_stat)  "Bandit parameter reset"
+            if (return_stat /= 0) then
+                print *, "Failed to write to log file."
+                stop
+            end if
 
         end subroutine reset_ucb_agent
+
+
+        function iter_ucb_agent(this) result(n)
+            IMPLICIT NONE
+
+            ! Declare variable
+            class(ucb_agent), intent(inout) :: this
+            integer, intent(inout) :: n
+
+            ! Internal variable
+            integer :: choosen_instance
+            real :: chosen_instance_score = -9e38
+            real :: current_score
+
+            integer :: i
+            integer :: return_stat
+            real :: rand_num
+
+            ! Compute expected value + Hoeffding's inequality, then find max score
+            do i = 1, SIZE(this%bandit_instance)
+                arm_score(i) = this%bandit_instance
+
+            end do
+
+            ! Find which arm to pull
+
+            ! Pull arm and update expected value
+
+            ! Log value
+
+
+
+
+
+
+        end function iter_ucb_agent
 
 
 end module ucb_agent_module
