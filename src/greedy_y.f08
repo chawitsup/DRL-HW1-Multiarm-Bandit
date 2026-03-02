@@ -39,10 +39,9 @@ module greedy_y_agent_module
             ! Internal variable
             integer :: i
 
-            
 
             ! Open file
-            open(unit=this%log_fd, file=trim(adjustl('./greedy_y.log')), status='NEW', action="WRITE", iostat=return_stat)
+            open(newunit=this%log_fd, file=trim(adjustl('./greedy_y.log')), status='NEW', action="WRITE", iostat=return_stat)
             if (return_stat /= 0) then
                 print *, "Failed to open log file."
                 stop
