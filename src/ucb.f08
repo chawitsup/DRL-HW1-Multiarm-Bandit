@@ -20,6 +20,9 @@ module ucb_agent_module
 
         ! Agent method
         contains
+        procedure :: init_ucb_agent
+        procedure :: reset_ucb_agent
+        procedure :: iter_ucb_agent
             
     end type ucb_agent
 
@@ -27,7 +30,8 @@ module ucb_agent_module
 
         ! Agent constructor method
         subroutine init_ucb_agent (this, bandit_in, c_in)
-
+            IMPLICIT NONE
+        
             ! Declare variable
             class (ucb_agent), intent(inout) :: this
 
@@ -45,7 +49,7 @@ module ucb_agent_module
             end if
 
             ! Write header to log file
-            write(unit=this%log_fd, fmt='(A,F0.10,A,I0)', iostat=return_stat)  "greedy_epsion, epsilon= ", epsilon_in, ", bandit_count= ", SIZE(bandit_in)
+            write(unit=this%log_fd, fmt='(A,F0.10,A,I0)', iostat=return_stat)  "Upper Confedience Bounds, c= ", c_in, ", bandit_count= ", SIZE(bandit_in)
             write(unit=this%log_fd, fmt='(A)', iostat=return_stat)  ""
             write(unit=this%log_fd, fmt='(A)', iostat=return_stat)  "explore?, which_bandit, result"
             if (return_stat /= 0) then
@@ -96,32 +100,66 @@ module ucb_agent_module
 
             ! Declare variable
             class(ucb_agent), intent(inout) :: this
-            integer, intent(inout) :: n
+            integer :: n
 
             ! Internal variable
-            integer :: choosen_instance
-            real :: chosen_instance_score = -9e38
-            real :: current_score
+            integer :: choosen_instance = 1
+            real :: choosen_instance_score = -9E37
+            real :: score
 
             integer :: i
             integer :: return_stat
             real :: rand_num
 
-            ! Compute expected value + Hoeffding's inequality, then find max score
+            ! Compute arm with most expected value + Hoeffding's inequality
             do i = 1, SIZE(this%bandit_instance)
-                arm_score(i) = this%bandit_instance
+
+                ! If any bandit_instance is never take, force take it
+                if (this%bandit_instance(i)%pull_count == 0) then
+                    choosen_instance = i
+                    exit
+                end if
+
+                ! Compute score (expected value + Hoeffding's inequality)
+                score = LOG(real(this%total_pull)) / real(this%bandit_instance(i)%pull_count)
+                score = this%c * SQRT(score)
+                score = score + this%bandit_instance(i)%expected_reward
+
+                ! Choose instance with max score
+                if (score > choosen_instance_score) then
+
+                    choosen_instance = i
+                    choosen_instance_score = score
+
+                end if
 
             end do
 
-            ! Find which arm to pull
-
             ! Pull arm and update expected value
+            n = pull(this%bandit_instance(choosen_instance))
+            this%bandit_instance(choosen_instance)%total_reward = this%bandit_instance(choosen_instance)%total_reward + n
+            this%bandit_instance(choosen_instance)%pull_count = this%bandit_instance(choosen_instance)%pull_count + 1
+            this%bandit_instance(choosen_instance)%expected_reward = real(this%bandit_instance(choosen_instance)%total_reward) / real(this%bandit_instance(choosen_instance)%pull_count)
+
+            ! Iterate to next agent's timestep
+            this%total_pull = this%total_pull + 1
 
             ! Log value
+            write(unit=this%log_fd, fmt='(A,I0,A,I0)', iostat=return_stat, ADVANCE='NO')  "?, ", choosen_instance,", ", n
 
+            ! Dump all expected value
+            do i = 1, SIZE(this%bandit_instance)
+            write(unit=this%log_fd, fmt='(A,F10.8)', iostat=return_stat, ADVANCE='NO') ", ", this%bandit_instance(i)%expected_reward
 
+            end do 
 
-
+            ! New line
+            write(unit=this%log_fd, fmt='(A)', iostat=return_stat, ADVANCE='YES') ""
+            
+            if (return_stat /= 0) then
+                print *, "Failed to write to log file."
+                stop
+            end if
 
 
         end function iter_ucb_agent

@@ -1,0 +1,16 @@
+{3: 5637, 7: 2100, 6: 2002, 9: 154, 10: 93, 2: 4, 5: 3, 4: 3, 1: 2, 8: 2}
+Reward collected:  8210
+Agent's expected value:  Explore?           ?
+Arm                3
+Reward             1
+Arm#1            0.0
+Arm#2           0.75
+Arm#3       0.982083
+Arm#4       0.666667
+Arm#5       0.666667
+Arm#6       0.339161
+Arm#7       0.889524
+Arm#8            0.0
+Arm#9       0.753247
+Arm#10      0.043011
+Name: 9999, dtype: object

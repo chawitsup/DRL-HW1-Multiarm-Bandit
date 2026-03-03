@@ -15,3 +15,12 @@ greedy_y:
 # Compile and link to greedy epsilon's file
 	gfortran src/do_greedy_y_agent.f08 build/multiarm_bandit.o build/greedy_y.o -g -o build/a.out
 	./build/a.out
+
+ucb:
+# Compile each fortran module
+	gfortran src/ucb.f08 -c -g -o build/ucb.o
+	gfortran src/multiarm_bandit.f08 -c -g -o build/multiarm_bandit.o
+
+# Compile and link to greedy epsilon's file
+	gfortran src/do_ucb_agent.f08 build/multiarm_bandit.o build/ucb.o -g -o build/a.out
+	./build/a.out
